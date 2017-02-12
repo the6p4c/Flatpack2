@@ -76,7 +76,7 @@ Length: 8
 | `S1-S6` | Power supply's serial number |
 
 ## TX, `0x05019C00`
-Sent to the power supply to change its default voltage. Seems to be a direct command to the supply with ID 1. Does not seem to take effect until the supply is logged off for some amount of time.  
+Sent to the power supply to change its default voltage. Seems to be a direct command to the supply with ID 1. Does not seem to take effect until the supply is logged off for some amount of time. The power supply sends a response with the same content as the message sent to it to confirm the voltage change.  
 Voltage is in centivolts, i.e. 48.52V is 4852.
 
 ```
