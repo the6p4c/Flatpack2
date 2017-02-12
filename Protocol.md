@@ -1,6 +1,21 @@
-# Conventions
+# Conventions In This Document
 RX is Power Supply -> Transceiver  
 TX is from Transceiver -> Power Supply
+
+# Hardware Layer
+The Flatpack2's CAN bus runs at 125kbit/s, using an extended ID field. The bus is relative to the power supply's output negative. Failure to connect the negative of the supply with the ground of your CAN transceiver will likely blow the transceiver up. (Side note: this took me 3 MCP2551s to realize.)
+
+# ID Format
+CAN bus IDs seem to be formatted as follows:
+
+```
+0x05AABBBB
+```
+
+| Field | Usage |
+| --- | --- |
+| `AA` | `00` if the message is a broadcast to all power supplies on the CAN bus, otherwise the supply's ID. |
+| `BBBB` | The true message ID |
 
 # Messages
 ## RX `0x0500XXXX`
@@ -14,7 +29,7 @@ Length: 8
 
 | Field | Usage |
 | --- | --- |
-| S1-S6 | Power supply's serial number |
+| `S1-S6` | Power supply's serial number |
 
 ## TX `0x05004804`
 Sent to log into a power supply. Unknown if address is a broadcase or specific message to a single power supply.
@@ -26,7 +41,7 @@ Length: 8
 
 | Field | Usage |
 | --- | --- |
-| S1-S6 | Power supply's serial number |
+| `S1-S6` | Power supply's serial number |
 
 ## RX `0x050140XX`
 Sent by the supply after log in, and contains information about the state of the power supply. When the supply is operating normally, `XX = 0x04`. When the supply has a warning, `XX = 0x08`. When an alarm is present, `XX = 0x0C`. When the supply is in walk in mode (voltage ramping up), `XX = 0x10`.  
@@ -39,14 +54,14 @@ All temperatures in degrees Celsius. Current in deciamps, i.e. 21.2A is 212. Out
 
 | Field | Usage |
 | --- | --- |
-| TI | Intake temperature |
-| C1 | Current low byte |
-| C2 | Current high byte |
-| O1 | Output voltage low byte |
-| O2 | Output voltage high byte |
-| I1 | Input voltage low byte |
-| I2 | Input voltage high byte |
-| TO | Output temperature |
+| `TI` | Intake temperature |
+| `C1` | Current low byte |
+| `C2` | Current high byte |
+| `O1` | Output voltage low byte |
+| `O2` | Output voltage high byte |
+| `I1` | Input voltage low byte |
+| `I2` | Input voltage high byte |
+| `TO` | Output temperature |
 
 ## RX, `0x05014400`
 Sent approximately every 15 seconds. Likely the power supply introducing itself to the CAN bus network.
@@ -58,7 +73,7 @@ Length: 8
 
 | Field | Usage |
 | --- | --- |
-| S1-S6 | Power supply's serial number |
+| `S1-S6` | Power supply's serial number |
 
 ## TX, `0x05019C00`
 Sent to the power supply to change its default voltage. Seems to be a direct command to the supply with ID 1. Does not seem to take effect until the supply is logged off for some amount of time.  
@@ -71,8 +86,8 @@ Length: 5
 
 | Field | Usage |
 | --- | --- |
-| V1 | Voltage low byte |
-| V2 | Voltage high byte |
+| `V1` | Voltage low byte |
+| `V2` | Voltage high byte |
 
 ## RX, `0x0501BFCC`
 Sent by the supply in response to recieving an `0x0501BFCC` message. Contains information about any alarms or warnings present, depending on the contents of the message initially sent.
@@ -84,8 +99,8 @@ Length: 7
 
 | Field | Usage |
 | --- | --- |
-| T1 | `0x04` if message contains warning information, `0x08` if message contains alarm information |
-| E1-E2 | Warning/alarm bit field |
+| `T1` | `0x04` if message contains warning information, `0x08` if message contains alarm information |
+| `E1-E2` | Warning/alarm bit field |
 
 ### Warnings/Alarms
 | Bit | `E1` | `E2` |
@@ -109,4 +124,4 @@ Length: 3
 
 | Field | Usage |
 | --- | --- |
-| T1 | `0x04` for warning information, `0x08` for alarm information |
+| `T1` | `0x04` for warning information, `0x08` for alarm information |
