@@ -32,7 +32,7 @@ Length: 8
 | `S1-S6` | Power supply's serial number |
 
 ## TX `0x05004804`
-Sent to log into a power supply. Unknown if address is a broadcase or specific message to a single power supply.
+Sent to log into a power supply. Unknown if address is a broadcast or specific message to a single power supply.
 
 ```
 Length: 8
