@@ -164,8 +164,7 @@
 <wire x1="3.8" y1="-5.58" x2="3.8" y2="0" width="0.4064" layer="51"/>
 </package>
 <package name="FLATPACK2_DC_LUG">
-<smd name="P$1" x="0" y="0" dx="8" dy="8" layer="1"/>
-<hole x="0" y="0" drill="4"/>
+<pad name="P$1" x="0" y="0" drill="4" diameter="8" shape="square"/>
 </package>
 </packages>
 <symbols>

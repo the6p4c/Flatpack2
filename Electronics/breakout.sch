@@ -1088,8 +1088,7 @@ part number 2062-2P from STA</description>
 <wire x1="3.8" y1="-5.58" x2="3.8" y2="0" width="0.4064" layer="51"/>
 </package>
 <package name="FLATPACK2_DC_LUG">
-<smd name="P$1" x="0" y="0" dx="8" dy="8" layer="1"/>
-<hole x="0" y="0" drill="4"/>
+<pad name="P$1" x="0" y="0" drill="4" diameter="8" shape="square"/>
 </package>
 </packages>
 <symbols>
@@ -1156,7 +1155,7 @@ part number 2062-2P from STA</description>
 </classes>
 <parts>
 <part name="J1" library="flatpack2-edge-connector" deviceset="FLATPACK2_CON" device=""/>
-<part name="J3" library="SparkFun-Connectors" deviceset="CONN_02" device="POGO_PIN_HOLES_ONLY"/>
+<part name="J3" library="SparkFun-Connectors" deviceset="CONN_02" device="1X02_NO_SILK"/>
 <part name="J2" library="connectors" deviceset="WEIDMULLER_PM_508" device=""/>
 <part name="J4" library="connectors" deviceset="FLATPACK2_DC_LUG" device=""/>
 <part name="J5" library="connectors" deviceset="FLATPACK2_DC_LUG" device=""/>
