@@ -58,8 +58,8 @@
 <library>
 <packages>
 <package name="FLATPACK2_CON">
-<smd name="AC_NEUTRAL_TOP" x="5" y="-29.15" dx="10" dy="8" layer="1" cream="no"/>
-<smd name="AC_ACTIVE_TOP" x="5" y="-14.55" dx="10" dy="8" layer="1" cream="no"/>
+<smd name="AC_LIVE_TOP" x="5" y="-29.15" dx="10" dy="8" layer="1" cream="no"/>
+<smd name="AC_NEUTRAL_TOP" x="5" y="-14.55" dx="10" dy="8" layer="1" cream="no"/>
 <smd name="CAN_L_TOP" x="5" y="1.15" dx="10" dy="1.5" layer="1" cream="no"/>
 <smd name="CAN_H_TOP" x="5" y="3.45" dx="10" dy="1.5" layer="1" cream="no"/>
 <smd name="DC_POSITIVE_TOP" x="7.5" y="14.55" dx="15" dy="8" layer="1" cream="no"/>
@@ -73,23 +73,25 @@
 <wire x1="0" y1="-34.6" x2="20" y2="-34.6" width="0" layer="20"/>
 <smd name="DC_NEGATIVE_BOTTOM" x="5" y="28.95" dx="10" dy="8" layer="16" cream="no"/>
 <smd name="DC_POSITIVE_BOTTOM" x="5" y="14.55" dx="10" dy="8" layer="16" cream="no"/>
-<smd name="AC_ACTIVE_BOTTOM" x="5" y="-14.55" dx="10" dy="8" layer="16" cream="no"/>
-<smd name="AC_NEUTRAL_BOTTOM" x="5" y="-29.15" dx="10" dy="8" layer="16" cream="no"/>
+<smd name="AC_NEUTRAL_BOTTOM" x="5" y="-14.55" dx="10" dy="8" layer="16" cream="no"/>
+<smd name="AC_LIVE_BOTTOM" x="5" y="-29.15" dx="10" dy="8" layer="16" cream="no"/>
+<smd name="AC_EARTH" x="5" y="0.05" dx="10" dy="8" layer="16" cream="no"/>
 </package>
 </packages>
 <symbols>
 <symbol name="FLATPACK2_CON">
 <pin name="AC_NEUTRAL" x="0" y="0" visible="pin" length="middle" direction="in" rot="R180"/>
-<pin name="AC_ACTIVE" x="0" y="5.08" visible="pin" length="middle" direction="in" rot="R180"/>
+<pin name="AC_LIVE" x="0" y="5.08" visible="pin" length="middle" direction="in" rot="R180"/>
 <pin name="CAN_L" x="0" y="10.16" visible="pin" length="middle" rot="R180"/>
 <pin name="CAN_H" x="0" y="15.24" visible="pin" length="middle" rot="R180"/>
 <pin name="DC_POSITIVE" x="0" y="20.32" visible="pin" length="middle" direction="out" rot="R180"/>
 <pin name="DC_NEGATIVE" x="0" y="25.4" visible="pin" length="middle" direction="out" rot="R180"/>
-<wire x1="-5.08" y1="-2.54" x2="-5.08" y2="27.94" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="-7.62" x2="-5.08" y2="27.94" width="0.254" layer="94"/>
 <wire x1="-5.08" y1="27.94" x2="-22.86" y2="27.94" width="0.254" layer="94"/>
-<wire x1="-22.86" y1="27.94" x2="-22.86" y2="-2.54" width="0.254" layer="94"/>
-<wire x1="-22.86" y1="-2.54" x2="-5.08" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="-22.86" y1="27.94" x2="-22.86" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-22.86" y1="-7.62" x2="-5.08" y2="-7.62" width="0.254" layer="94"/>
 <text x="-22.352" y="28.448" size="1.27" layer="95">&gt;NAME</text>
+<pin name="AC_EARTH" x="0" y="-5.08" visible="pin" length="middle" direction="in" rot="R180"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -101,7 +103,8 @@
 <devices>
 <device name="" package="FLATPACK2_CON">
 <connects>
-<connect gate="G$1" pin="AC_ACTIVE" pad="AC_ACTIVE_BOTTOM AC_ACTIVE_TOP"/>
+<connect gate="G$1" pin="AC_EARTH" pad="AC_EARTH"/>
+<connect gate="G$1" pin="AC_LIVE" pad="AC_LIVE_BOTTOM AC_LIVE_TOP"/>
 <connect gate="G$1" pin="AC_NEUTRAL" pad="AC_NEUTRAL_BOTTOM AC_NEUTRAL_TOP"/>
 <connect gate="G$1" pin="CAN_H" pad="CAN_H_TOP"/>
 <connect gate="G$1" pin="CAN_L" pad="CAN_L_TOP"/>

@@ -157,8 +157,8 @@
 <library name="flatpack2-edge-connector">
 <packages>
 <package name="FLATPACK2_CON">
-<smd name="AC_NEUTRAL_TOP" x="5" y="-29.15" dx="10" dy="8" layer="1" cream="no"/>
-<smd name="AC_ACTIVE_TOP" x="5" y="-14.55" dx="10" dy="8" layer="1" cream="no"/>
+<smd name="AC_LIVE_TOP" x="5" y="-29.15" dx="10" dy="8" layer="1" cream="no"/>
+<smd name="AC_NEUTRAL_TOP" x="5" y="-14.55" dx="10" dy="8" layer="1" cream="no"/>
 <smd name="CAN_L_TOP" x="5" y="1.15" dx="10" dy="1.5" layer="1" cream="no"/>
 <smd name="CAN_H_TOP" x="5" y="3.45" dx="10" dy="1.5" layer="1" cream="no"/>
 <smd name="DC_POSITIVE_TOP" x="7.5" y="14.55" dx="15" dy="8" layer="1" cream="no"/>
@@ -172,23 +172,25 @@
 <wire x1="0" y1="-34.6" x2="20" y2="-34.6" width="0" layer="20"/>
 <smd name="DC_NEGATIVE_BOTTOM" x="5" y="28.95" dx="10" dy="8" layer="16" cream="no"/>
 <smd name="DC_POSITIVE_BOTTOM" x="5" y="14.55" dx="10" dy="8" layer="16" cream="no"/>
-<smd name="AC_ACTIVE_BOTTOM" x="5" y="-14.55" dx="10" dy="8" layer="16" cream="no"/>
-<smd name="AC_NEUTRAL_BOTTOM" x="5" y="-29.15" dx="10" dy="8" layer="16" cream="no"/>
+<smd name="AC_NEUTRAL_BOTTOM" x="5" y="-14.55" dx="10" dy="8" layer="16" cream="no"/>
+<smd name="AC_LIVE_BOTTOM" x="5" y="-29.15" dx="10" dy="8" layer="16" cream="no"/>
+<smd name="AC_EARTH" x="5" y="0.05" dx="10" dy="8" layer="16" cream="no"/>
 </package>
 </packages>
 <symbols>
 <symbol name="FLATPACK2_CON">
 <pin name="AC_NEUTRAL" x="0" y="0" visible="pin" length="middle" direction="in" rot="R180"/>
-<pin name="AC_ACTIVE" x="0" y="5.08" visible="pin" length="middle" direction="in" rot="R180"/>
+<pin name="AC_LIVE" x="0" y="5.08" visible="pin" length="middle" direction="in" rot="R180"/>
 <pin name="CAN_L" x="0" y="10.16" visible="pin" length="middle" rot="R180"/>
 <pin name="CAN_H" x="0" y="15.24" visible="pin" length="middle" rot="R180"/>
 <pin name="DC_POSITIVE" x="0" y="20.32" visible="pin" length="middle" direction="out" rot="R180"/>
 <pin name="DC_NEGATIVE" x="0" y="25.4" visible="pin" length="middle" direction="out" rot="R180"/>
-<wire x1="-5.08" y1="-2.54" x2="-5.08" y2="27.94" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="-7.62" x2="-5.08" y2="27.94" width="0.254" layer="94"/>
 <wire x1="-5.08" y1="27.94" x2="-22.86" y2="27.94" width="0.254" layer="94"/>
-<wire x1="-22.86" y1="27.94" x2="-22.86" y2="-2.54" width="0.254" layer="94"/>
-<wire x1="-22.86" y1="-2.54" x2="-5.08" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="-22.86" y1="27.94" x2="-22.86" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-22.86" y1="-7.62" x2="-5.08" y2="-7.62" width="0.254" layer="94"/>
 <text x="-22.352" y="28.448" size="1.27" layer="95">&gt;NAME</text>
+<pin name="AC_EARTH" x="0" y="-5.08" visible="pin" length="middle" direction="in" rot="R180"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -200,7 +202,8 @@
 <devices>
 <device name="" package="FLATPACK2_CON">
 <connects>
-<connect gate="G$1" pin="AC_ACTIVE" pad="AC_ACTIVE_BOTTOM AC_ACTIVE_TOP"/>
+<connect gate="G$1" pin="AC_EARTH" pad="AC_EARTH"/>
+<connect gate="G$1" pin="AC_LIVE" pad="AC_LIVE_BOTTOM AC_LIVE_TOP"/>
 <connect gate="G$1" pin="AC_NEUTRAL" pad="AC_NEUTRAL_BOTTOM AC_NEUTRAL_TOP"/>
 <connect gate="G$1" pin="CAN_H" pad="CAN_H_TOP"/>
 <connect gate="G$1" pin="CAN_L" pad="CAN_L_TOP"/>
@@ -1078,55 +1081,41 @@ part number 2062-2P from STA</description>
 </library>
 <library name="connectors">
 <packages>
-<package name="WEIDMULLER_PM_508">
-<pad name="P2" x="0" y="2.54" drill="1.3" shape="long"/>
-<pad name="P1" x="0" y="-2.54" drill="1.3" shape="long"/>
-<wire x1="3.8" y1="0" x2="3.8" y2="5.58" width="0.4064" layer="51"/>
-<wire x1="3.8" y1="5.58" x2="-3.8" y2="5.58" width="0.4064" layer="51"/>
-<wire x1="-3.8" y1="5.58" x2="-3.8" y2="-5.58" width="0.4064" layer="51"/>
-<wire x1="-3.8" y1="-5.58" x2="3.8" y2="-5.58" width="0.4064" layer="51"/>
-<wire x1="3.8" y1="-5.58" x2="3.8" y2="0" width="0.4064" layer="51"/>
-</package>
 <package name="FLATPACK2_DC_LUG">
 <pad name="P$1" x="0" y="0" drill="4" diameter="8" shape="square"/>
 </package>
+<package name="WEIDMULLER_PM_508">
+<pad name="1" x="0" y="5.08" drill="1.3" shape="long"/>
+<pad name="2" x="0" y="0" drill="1.3" shape="long"/>
+<wire x1="3.8" y1="8.12" x2="-3.8" y2="8.12" width="0.4064" layer="51"/>
+<wire x1="-3.8" y1="8.12" x2="-3.8" y2="-8.12" width="0.4064" layer="51"/>
+<wire x1="-3.8" y1="-8.12" x2="3.8" y2="-8.12" width="0.4064" layer="51"/>
+<wire x1="3.8" y1="-8.12" x2="3.8" y2="8.12" width="0.4064" layer="51"/>
+<pad name="3" x="0" y="-5.08" drill="1.3" shape="long"/>
+</package>
 </packages>
 <symbols>
-<symbol name="CONN_02">
-<description>&lt;h3&gt;2 Pin Connection&lt;/h3&gt;</description>
-<wire x1="3.81" y1="-2.54" x2="-2.54" y2="-2.54" width="0.4064" layer="94"/>
-<wire x1="1.27" y1="2.54" x2="2.54" y2="2.54" width="0.6096" layer="94"/>
-<wire x1="1.27" y1="0" x2="2.54" y2="0" width="0.6096" layer="94"/>
-<wire x1="-2.54" y1="5.08" x2="-2.54" y2="-2.54" width="0.4064" layer="94"/>
-<wire x1="3.81" y1="-2.54" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
-<wire x1="-2.54" y1="5.08" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
-<text x="-2.54" y="-4.826" size="1.778" layer="96" font="vector">&gt;VALUE</text>
-<text x="-2.54" y="5.588" size="1.778" layer="95" font="vector">&gt;NAME</text>
-<pin name="1" x="7.62" y="0" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
-<pin name="2" x="7.62" y="2.54" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
-</symbol>
 <symbol name="FLATPACK2_DC_LUG">
 <pin name="PIN" x="-2.54" y="0" visible="off" length="middle" direction="pas"/>
 <text x="2.54" y="0" size="1.778" layer="95">&gt;NAME</text>
 </symbol>
+<symbol name="CONN_03">
+<description>&lt;h3&gt;3 Pin Connection&lt;/h3&gt;</description>
+<wire x1="3.81" y1="-5.08" x2="-2.54" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="1.27" y1="2.54" x2="2.54" y2="2.54" width="0.6096" layer="94"/>
+<wire x1="1.27" y1="0" x2="2.54" y2="0" width="0.6096" layer="94"/>
+<wire x1="1.27" y1="-2.54" x2="2.54" y2="-2.54" width="0.6096" layer="94"/>
+<wire x1="-2.54" y1="5.08" x2="-2.54" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="3.81" y1="-5.08" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
+<wire x1="-2.54" y1="5.08" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
+<text x="-2.54" y="-7.366" size="1.778" layer="96" font="vector">&gt;VALUE</text>
+<text x="-2.54" y="5.588" size="1.778" layer="95" font="vector">&gt;NAME</text>
+<pin name="1" x="7.62" y="-2.54" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
+<pin name="2" x="7.62" y="0" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
+<pin name="3" x="7.62" y="2.54" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
+</symbol>
 </symbols>
 <devicesets>
-<deviceset name="WEIDMULLER_PM_508" prefix="J" uservalue="yes">
-<gates>
-<gate name="G$1" symbol="CONN_02" x="0" y="-2.54"/>
-</gates>
-<devices>
-<device name="" package="WEIDMULLER_PM_508">
-<connects>
-<connect gate="G$1" pin="1" pad="P1"/>
-<connect gate="G$1" pin="2" pad="P2"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="FLATPACK2_DC_LUG" prefix="J">
 <gates>
 <gate name="G$1" symbol="FLATPACK2_DC_LUG" x="0" y="0"/>
@@ -1135,6 +1124,23 @@ part number 2062-2P from STA</description>
 <device name="" package="FLATPACK2_DC_LUG">
 <connects>
 <connect gate="G$1" pin="PIN" pad="P$1"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="WEIDMULLER_PM_508" prefix="J" uservalue="yes">
+<gates>
+<gate name="G$1" symbol="CONN_03" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="WEIDMULLER_PM_508">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -1156,11 +1162,11 @@ part number 2062-2P from STA</description>
 <parts>
 <part name="J1" library="flatpack2-edge-connector" deviceset="FLATPACK2_CON" device=""/>
 <part name="J3" library="SparkFun-Connectors" deviceset="CONN_02" device="1X02_NO_SILK"/>
-<part name="J2" library="connectors" deviceset="WEIDMULLER_PM_508" device=""/>
 <part name="J4" library="connectors" deviceset="FLATPACK2_DC_LUG" device=""/>
 <part name="J5" library="connectors" deviceset="FLATPACK2_DC_LUG" device=""/>
 <part name="J6" library="connectors" deviceset="FLATPACK2_DC_LUG" device=""/>
 <part name="J7" library="connectors" deviceset="FLATPACK2_DC_LUG" device=""/>
+<part name="J2" library="connectors" deviceset="WEIDMULLER_PM_508" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -1169,11 +1175,11 @@ part number 2062-2P from STA</description>
 <instances>
 <instance part="J1" gate="G$1" x="22.86" y="2.54"/>
 <instance part="J3" gate="G$1" x="35.56" y="17.78" rot="R180"/>
-<instance part="J2" gate="G$1" x="35.56" y="7.62" rot="R180"/>
 <instance part="J4" gate="G$1" x="40.64" y="17.78" rot="R270"/>
 <instance part="J5" gate="G$1" x="43.18" y="17.78" rot="R270"/>
 <instance part="J6" gate="G$1" x="45.72" y="17.78" rot="R270"/>
 <instance part="J7" gate="G$1" x="48.26" y="17.78" rot="R270"/>
+<instance part="J2" gate="G$1" x="35.56" y="2.54" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -1192,22 +1198,6 @@ part number 2062-2P from STA</description>
 <pinref part="J1" gate="G$1" pin="CAN_L"/>
 <wire x1="25.4" y1="12.7" x2="22.86" y2="12.7" width="0.1524" layer="91"/>
 <pinref part="J3" gate="G$1" pin="2"/>
-</segment>
-</net>
-<net name="N$3" class="0">
-<segment>
-<pinref part="J1" gate="G$1" pin="AC_NEUTRAL"/>
-<wire x1="22.86" y1="2.54" x2="25.4" y2="2.54" width="0.1524" layer="91"/>
-<wire x1="25.4" y1="2.54" x2="25.4" y2="5.08" width="0.1524" layer="91"/>
-<pinref part="J2" gate="G$1" pin="2"/>
-<wire x1="25.4" y1="5.08" x2="27.94" y2="5.08" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$4" class="0">
-<segment>
-<pinref part="J2" gate="G$1" pin="1"/>
-<pinref part="J1" gate="G$1" pin="AC_ACTIVE"/>
-<wire x1="27.94" y1="7.62" x2="22.86" y2="7.62" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$5" class="0">
@@ -1233,6 +1223,31 @@ part number 2062-2P from STA</description>
 <junction x="45.72" y="22.86"/>
 <pinref part="J1" gate="G$1" pin="DC_NEGATIVE"/>
 <wire x1="45.72" y1="27.94" x2="22.86" y2="27.94" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$3" class="0">
+<segment>
+<pinref part="J1" gate="G$1" pin="AC_LIVE"/>
+<wire x1="22.86" y1="7.62" x2="25.4" y2="7.62" width="0.1524" layer="91"/>
+<wire x1="25.4" y1="7.62" x2="25.4" y2="5.08" width="0.1524" layer="91"/>
+<pinref part="J2" gate="G$1" pin="1"/>
+<wire x1="25.4" y1="5.08" x2="27.94" y2="5.08" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$4" class="0">
+<segment>
+<pinref part="J2" gate="G$1" pin="2"/>
+<pinref part="J1" gate="G$1" pin="AC_NEUTRAL"/>
+<wire x1="27.94" y1="2.54" x2="22.86" y2="2.54" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$6" class="0">
+<segment>
+<pinref part="J1" gate="G$1" pin="AC_EARTH"/>
+<wire x1="22.86" y1="-2.54" x2="25.4" y2="-2.54" width="0.1524" layer="91"/>
+<wire x1="25.4" y1="-2.54" x2="25.4" y2="0" width="0.1524" layer="91"/>
+<pinref part="J2" gate="G$1" pin="3"/>
+<wire x1="25.4" y1="0" x2="27.94" y2="0" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
