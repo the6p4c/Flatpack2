@@ -1,109 +1,122 @@
-# Conventions In This Document
-RX is Power Supply -> Transceiver  
-TX is from Transceiver -> Power Supply
+<!--
+<table>
+	<tr>
+		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td> <td>3</td> <td>4</td> <td>5</td> <td>6</td> <td>7</td>
+	</tr>
+	<tr>
+		<td><b>Value</b></td> <td>Byte 0</td> <td>Byte 1</td> <td>Byte 2</td> <td>Byte 3</td> <td>Byte 4</td> <td>Byte 5</td> <td>Byte 6</td> <td>Byte 7</td>
+	</tr>
+</table>
+-->
 
-# Hardware Layer
-The Flatpack2's CAN bus runs at 125kbit/s, using an extended ID field. The bus is relative to the power supply's output negative. Failure to connect the negative of the supply with the ground of your CAN transceiver will likely blow the transceiver up. (Side note: this took me 3 MCP2551s to realize.)
+# Conventions in This Document
+RX is a message from the power supply to the transceiver  
+TX is a message from the transceiver to the power supply
 
-# ID Format
-CAN bus IDs seem to be formatted as follows:
-
-```
-0x05AABBBB
-```
-
-| Field | Usage |
-| --- | --- |
-| `AA` | `00` if the message is a broadcast to all power supplies on the CAN bus, otherwise the supply's ID. |
-| `BBBB` | The true message ID |
+# Hardware
+The Flatpack2's CAN bus runs at 125kbit/s, using an extended ID field. The bus is relative to the PSU's negative output rail. Failure to connect the negative of the supply with the ground of your CAN transceiver will likely blow the transceiver up (this took me 3 MCP2551s to realize).
 
 # Messages
-## RX `0x0500XXXX`
-Sent approximately every two seconds. `XXXX` are the last four digits of the power supply's serial number.  
-Possibly the power supply asking to be logged in?
 
-```
-Length: 8
-  Data: 0x1B _S1_ _S2_ _S3_ _S4_ _S5_ _S6_ 0x00
-```
+## (RX) Log in request (??), `0x0500XXXX`
+Sent approximately every two seconds. `XXXX` are usually the last four digits of the power supply's serial number. (Doesn't always exactly match - supply ending with 5418 sends 1418)
 
-| Field | Usage |
+After approximately 15 seconds, the power supply will log out again if it does not recieve another log in message.
+
+<table>
+	<tr>
+		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td> <td>3</td> <td>4</td> <td>5</td> <td>6</td> <td>7</td>
+	</tr>
+	<tr>
+    	<td><b>Value</b></td> <td><code>0x1B</code></td> <td colspan='6'>Power supply's serial number</td> <td><code>0x00</code></td>
+	</tr>
+</table>
+
+## (TX) Log in, `0x050048XX`
+Sent to log into a power supply. Unknown if address is a broadcast or a specific message to a single power supply.
+
+The ID of the supply is set by the last byte of the address, where `XX = ID * 4`. The ID ranges from `0x01` to `0x3F` (resulting in a range for `XX` of `0x04` to `0xFC`).
+
+<table>
+	<tr>
+		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td> <td>3</td> <td>4</td> <td>5</td> <td>6</td> <td>7</td>
+	</tr>
+	<tr>
+		<td><b>Value</b></td> <td colspan='6'>Power supply's serial number</td> <td><code>0x00</code></td> <td><code>0x00</code></td>
+	</tr>
+</table>
+
+## (RX) Status, `0x05XX40YY`
+Sent by the power supply after it is logged into, and contains information about the current state of the power supply.
+
+`XX` is the power supply's ID.
+
+| Value of `YY` | Power supply state |
 | --- | --- |
-| `S1-S6` | Power supply's serial number |
+| `0x04` | Normal operation |
+| `0x08` | Warning |
+| `0x0C` | Alarm |
+| `0x10` | Walk in (voltage ramping up) |
 
-## TX `0x05004804`
-Sent to log into a power supply. Unknown if address is a broadcast or specific message to a single power supply.
+Current, output voltage and input voltage are stored in little endian (LSB first). All temperatures are in degrees Celsius. Current is in deciamps (i.e. 21.2A is 212). Output voltage is in centivolts (i.e. 48.52V is 4852). Input voltage is in volts.
 
-```
-Length: 8
-  Data: _S1_ _S2_ _S3_ _S4_ _S5_ _S6_ 0x00 0x00
-```
+<table>
+	<tr>
+		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td> <td>3</td> <td>4</td> <td>5</td> <td>6</td> <td>7</td>
+	</tr>
+	<tr>
+		<td><b>Value</b></td> <td>Intake temperature</td> <td colspan='2'>Current</td> <td colspan='2'>Output voltage</td> <td colspan='2'>Input voltage</td> <td>Output temperature</td>
+	</tr>
+</table>
 
-| Field | Usage |
-| --- | --- |
-| `S1-S6` | Power supply's serial number |
+## (RX) CAN Bus network introduction, `0x05XX4400`
+Sent approximately every 15 seconds. Seems to be the power supply introducing itself to the CAN bus network.
 
-## RX `0x050140XX`
-Sent by the supply after log in, and contains information about the state of the power supply. When the supply is operating normally, `XX = 0x04`. When the supply has a warning, `XX = 0x08`. When an alarm is present, `XX = 0x0C`. When the supply is in walk in mode (voltage ramping up), `XX = 0x10`.  
-All temperatures in degrees Celsius. Current in deciamps, i.e. 21.2A is 212. Output voltage in centivolts, i.e. 48.52V is 4852. Input voltage in volts.
+`XX` is the power supply's ID.
 
-```
-  Length: 8
-    Data: _TI_ _C1_ _C2_ _O1_ _O2_ _I1_ _I2_ _TO_
-```
+<table>
+	<tr>
+		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td> <td>3</td> <td>4</td> <td>5</td> <td>6</td> <td>7</td>
+	</tr>
+	<tr>
+		<td><b>Value</b></td> <td colspan='6'>Power supply's serial number</td> <td><code>0x00</code></td> <td><code>0x00</code></td>
+	</tr>
+</table>
 
-| Field | Usage |
-| --- | --- |
-| `TI` | Intake temperature |
-| `C1` | Current low byte |
-| `C2` | Current high byte |
-| `O1` | Output voltage low byte |
-| `O2` | Output voltage high byte |
-| `I1` | Input voltage low byte |
-| `I2` | Input voltage high byte |
-| `TO` | Output temperature |
+## (TX) Set default voltage, `0x05XX9C00`
+Sent to the power supply to set its default voltage. Does not take effect until the supply is logged out. If the supply is logged in when the command is sent, the voltage is set when the log in times out. If it is not logged in, the voltage will be set when the supply logs in then times out.
 
-## RX, `0x05014400`
-Sent approximately every 15 seconds. Likely the power supply introducing itself to the CAN bus network.
+`XX` is the power supply's ID.
 
-```
-Length: 8
-  Data: _S1_ _S2_ _S3_ _S4_ _S5_ _S6_ 0x00 0x00
-```
+The voltage is stored in little-endian and is in centivolts (i.e. 48.52V is 4852).
 
-| Field | Usage |
-| --- | --- |
-| `S1-S6` | Power supply's serial number |
+<table>
+	<tr>
+		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td> <td>3</td> <td>4</td>
+	</tr>
+	<tr>
+		<td><b>Value</b></td> <td><code>0x29</code></td> <td><code>0x15</code></td> <td><code>0x00</code></td> <td colspan='2'>New voltage</td>
+	</tr>
+</table>
 
-## TX, `0x05019C00`
-Sent to the power supply to change its default voltage. Seems to be a direct command to the supply with ID 1. Does not seem to take effect until the supply is logged off for some amount of time. The power supply sends a response with the same content as the message sent to it to confirm the voltage change.  
-Voltage is in centivolts, i.e. 48.52V is 4852.
+## (RX) Alarms/warnings information, `0x05XXBFCC`
+Sent by the power supply in response to recieving an `0x05XXBFCC` message. Contains information about any alarms or warnings present, depending on the contents of the request message.
 
-```
-Length: 5
-  Data: 0x29 0x15 0x00 _V1_ V2_
-```
+`XX` is the power supply's ID.
 
-| Field | Usage |
-| --- | --- |
-| `V1` | Voltage low byte |
-| `V2` | Voltage high byte |
-
-## RX, `0x0501BFCC`
-Sent by the supply in response to recieving an `0x0501BFCC` message. Contains information about any alarms or warnings present, depending on the contents of the message initially sent.
-
-```
-Length: 7
-  Data: 0x0E _T1_ 0x00 _E1_ _E2_ 0x00 0x00
-```
-
-| Field | Usage |
-| --- | --- |
-| `T1` | `0x04` if message contains warning information, `0x08` if message contains alarm information |
-| `E1-E2` | Warning/alarm bit field |
+<table>
+	<tr>
+		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td> <td>3</td> <td>4</td> <td>5</td> <td>6</td>
+	</tr>
+	<tr>
+		<td><b>Value</b></td> <td><code>0x0E</code></td> <td><code>0x04</code> (warnings), <code>0x08</code> (alarms)</td> <td><code>0x00</code></td> <td>Warning/alarm bit field byte 1</td> <td>Warning/alarm bit field byte 2</td> <td><code>0x00</code></td> <td><code>0x00</code></td>
+	</tr>
+</table>
 
 ### Warnings/Alarms
-| Bit | `E1` | `E2` |
+Bit 0 is the LSB.
+
+| Bit | Warning/alarm bit field byte 1 | Warning/alarm bit field 2 |
 | --- | --- | --- |
 | 0 | OVS Lock Out | Internal Voltage |
 | 1 | Mod Fail Primary | Module Fail |
@@ -114,14 +127,14 @@ Length: 7
 | 6 | Low Temp | Fan 3 Speed Low |
 | 7 | Current Limit | Inner Volt |
 
-## TX, `0x0501BFFC`
-Sent to the power supply to get information on currently active alarms or warnings. Should only be sent after recieving a `0x050140XX` where `X = 08` or `X = 0C`.
+## (TX) Alarms/warnings information request, `0x05XXBFCC`
+Sent to the power supply to request information on the current warnings and alarms. Should be sent after recieving an `0x05XX40YY` message where `YY = 08` or `YY = 0C` (i.e a warning or alarm is present). Byte 2 determines if warning or alarm information is returned.
 
-```
-Length: 3
-  Data: 0x08 _T1_ 0x00
-```
-
-| Field | Usage |
-| --- | --- |
-| `T1` | `0x04` for warning information, `0x08` for alarm information |
+<table>
+	<tr>
+		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td>
+	</tr>
+	<tr>
+		<td><b>Value</b></td> <td><code>0x08</code></td> <td><code>0x04</code> (warnings), <code>0x08</code> (alarms)</td> <td><code>0x00</code></td>
+	</tr>
+</table>
