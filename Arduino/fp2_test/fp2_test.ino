@@ -33,6 +33,16 @@ void printMessage(char *direction, long unsigned int id, unsigned char len, unsi
 		Serial.print(output);
 	}
 
+	Serial.print(" ");
+
+	for (int i = 0; i < len; ++i) {
+		if (buf[i] >= 0x20 && buf[i] <= 0x7E) {
+			Serial.print((char) buf[i]);
+		} else {
+			Serial.print(" ");
+		}
+	}
+
 	Serial.println();
 }
 
