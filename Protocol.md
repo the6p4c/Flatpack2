@@ -17,19 +17,6 @@ TX is a message from the transceiver to the power supply
 The Flatpack2's CAN bus runs at 125kbit/s, using an extended ID field. The bus is relative to the PSU's negative output rail. Failure to connect the negative of the supply with the ground of your CAN transceiver will likely blow the transceiver up (this took me 3 MCP2551s to realize).
 
 # Messages
-
-## (RX) Log in request (??), `0x0500XXXX`
-Sent approximately every two seconds. `XXXX` are usually the last four digits of the power supply's serial number. (Doesn't always exactly match - supply ending with 5418 sends 1418)
-
-<table>
-	<tr>
-		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td> <td>3</td> <td>4</td> <td>5</td> <td>6</td> <td>7</td>
-	</tr>
-	<tr>
-    	<td><b>Value</b></td> <td><code>0x1B</code></td> <td colspan='6'>Power supply's serial number</td> <td><code>0x00</code></td>
-	</tr>
-</table>
-
 ## (TX) Log in, `0x050048XX`
 Sent to log into a power supply. Unknown if address is a broadcast or a specific message to a single power supply. After approximately 15 seconds, the power supply will log out again if it does not recieve another log in message.
 
@@ -41,6 +28,18 @@ The ID of the supply is set by the last byte of the address, where `XX = ID * 4`
 	</tr>
 	<tr>
 		<td><b>Value</b></td> <td colspan='6'>Power supply's serial number</td> <td><code>0x00</code></td> <td><code>0x00</code></td>
+	</tr>
+</table>
+
+## (RX) CAN bus introduction (??), `0x0500XXXX`
+Sent approximately every two seconds. `XXXX` are usually the last four digits of the power supply's serial number. (Doesn't always exactly match - supply ending with 5418 sends 1418)
+
+<table>
+	<tr>
+		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td> <td>3</td> <td>4</td> <td>5</td> <td>6</td> <td>7</td>
+	</tr>
+	<tr>
+    	<td><b>Value</b></td> <td><code>0x1B</code></td> <td colspan='6'>Power supply's serial number</td> <td><code>0x00</code></td>
 	</tr>
 </table>
 
@@ -67,7 +66,7 @@ Current, output voltage and input voltage are stored in little endian (LSB first
 	</tr>
 </table>
 
-## (RX) CAN Bus network introduction (??), `0x05XX4400`
+## (RX) Log in request (??), `0x05XX4400`
 Sent approximately every 15 seconds. Seems to be the power supply introducing itself to the CAN bus network.
 
 `XX` is the power supply's ID.
@@ -94,6 +93,18 @@ The voltage is stored in little-endian and is in centivolts (i.e. 48.52V is 4852
 	</tr>
 	<tr>
 		<td><b>Value</b></td> <td><code>0x29</code></td> <td><code>0x15</code></td> <td><code>0x00</code></td> <td colspan='2'>New voltage</td>
+	</tr>
+</table>
+
+## (TX) Alarms/warnings information request, `0x05XXBFFC`
+Sent to the power supply to request information on the current warnings and alarms. Should be sent after recieving an `0x05XX40YY` message where `YY = 08` or `YY = 0C` (i.e a warning or alarm is present). Byte 2 determines if warning or alarm information is returned.
+
+<table>
+	<tr>
+		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td>
+	</tr>
+	<tr>
+		<td><b>Value</b></td> <td><code>0x08</code></td> <td><code>0x04</code> (warnings), <code>0x08</code> (alarms)</td> <td><code>0x00</code></td>
 	</tr>
 </table>
 
@@ -124,15 +135,3 @@ Bit 0 is the LSB.
 | 5 | High Temp | Sub Mod1 Fail |
 | 6 | Low Temp | Fan 3 Speed Low |
 | 7 | Current Limit | Inner Volt |
-
-## (TX) Alarms/warnings information request, `0x05XXBFFC`
-Sent to the power supply to request information on the current warnings and alarms. Should be sent after recieving an `0x05XX40YY` message where `YY = 08` or `YY = 0C` (i.e a warning or alarm is present). Byte 2 determines if warning or alarm information is returned.
-
-<table>
-	<tr>
-		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td>
-	</tr>
-	<tr>
-		<td><b>Value</b></td> <td><code>0x08</code></td> <td><code>0x04</code> (warnings), <code>0x08</code> (alarms)</td> <td><code>0x00</code></td>
-	</tr>
-</table>
