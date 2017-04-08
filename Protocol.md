@@ -21,8 +21,6 @@ The Flatpack2's CAN bus runs at 125kbit/s, using an extended ID field. The bus i
 ## (RX) Log in request (??), `0x0500XXXX`
 Sent approximately every two seconds. `XXXX` are usually the last four digits of the power supply's serial number. (Doesn't always exactly match - supply ending with 5418 sends 1418)
 
-After approximately 15 seconds, the power supply will log out again if it does not recieve another log in message.
-
 <table>
 	<tr>
 		<td><b>Byte</b></td> <td>0</td> <td>1</td> <td>2</td> <td>3</td> <td>4</td> <td>5</td> <td>6</td> <td>7</td>
@@ -33,7 +31,7 @@ After approximately 15 seconds, the power supply will log out again if it does n
 </table>
 
 ## (TX) Log in, `0x050048XX`
-Sent to log into a power supply. Unknown if address is a broadcast or a specific message to a single power supply.
+Sent to log into a power supply. Unknown if address is a broadcast or a specific message to a single power supply. After approximately 15 seconds, the power supply will log out again if it does not recieve another log in message.
 
 The ID of the supply is set by the last byte of the address, where `XX = ID * 4`. The ID ranges from `0x01` to `0x3F` (resulting in a range for `XX` of `0x04` to `0xFC`).
 
@@ -69,7 +67,7 @@ Current, output voltage and input voltage are stored in little endian (LSB first
 	</tr>
 </table>
 
-## (RX) CAN Bus network introduction, `0x05XX4400`
+## (RX) CAN Bus network introduction (??), `0x05XX4400`
 Sent approximately every 15 seconds. Seems to be the power supply introducing itself to the CAN bus network.
 
 `XX` is the power supply's ID.
@@ -99,8 +97,8 @@ The voltage is stored in little-endian and is in centivolts (i.e. 48.52V is 4852
 	</tr>
 </table>
 
-## (RX) Alarms/warnings information, `0x05XXBFCC`
-Sent by the power supply in response to recieving an `0x05XXBFCC` message. Contains information about any alarms or warnings present, depending on the contents of the request message.
+## (RX) Alarms/warnings information, `0x05XXBFFC`
+Sent by the power supply in response to recieving an `0x05XXBFFC` message. Contains information about any alarms or warnings present, depending on the contents of the request message.
 
 `XX` is the power supply's ID.
 
@@ -127,7 +125,7 @@ Bit 0 is the LSB.
 | 6 | Low Temp | Fan 3 Speed Low |
 | 7 | Current Limit | Inner Volt |
 
-## (TX) Alarms/warnings information request, `0x05XXBFCC`
+## (TX) Alarms/warnings information request, `0x05XXBFFC`
 Sent to the power supply to request information on the current warnings and alarms. Should be sent after recieving an `0x05XX40YY` message where `YY = 08` or `YY = 0C` (i.e a warning or alarm is present). Byte 2 determines if warning or alarm information is returned.
 
 <table>

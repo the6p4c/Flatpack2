@@ -4,12 +4,15 @@
 const int CAN_CS_PIN = 10;
 const int CAN_INT_PIN = 2;
 
+const char *alarms0Strings[] = {"OVS_LOCK_OUT", "MOD_FAIL_PRIMARY", "MOD_FAIL_SECONDARY", "HIGH_MAINS", "LOW_MAINS", "HIGH_TEMP", "LOW_TEMP", "CURRENT_LIMIT"};
+const char *alarms1Strings[] = {"INTERNAL_VOLTAGE", "MODULE_FAIL", "MOD_FAIL_SECONDARY", "FAN1_SPEED_LOW", "FAN2_SPEED_LOW", "SUB_MOD1_FAIL", "FAN3_SPEED_LOW", "INNER_VOLT"};
+
 MCP_CAN CAN(CAN_CS_PIN);
 
-bool serialNumberPresent = false;
+bool serialNumberReceived = false;
 uint8_t serialNumber[6];
 
-unsigned long lastLogInTime;
+unsigned long lastLogInTime = 0;
 
 void setup() {
 	Serial.begin(115200);
@@ -27,7 +30,7 @@ void setup() {
 	CAN.setMode(MCP_NORMAL);
 }
 
-void printMessage(long unsigned int rxID, unsigned char len, unsigned char rxBuf[]) {
+void printMessage(uint32_t rxID, uint8_t len, uint8_t rxBuf[]) {
 	char output[256];
 
 	snprintf(output, 256, "ID: 0x%.8lX Length: %1d Data:", rxID, len);
@@ -42,39 +45,39 @@ void printMessage(long unsigned int rxID, unsigned char len, unsigned char rxBuf
 }
 
 void logIn() {
-	if (serialNumberPresent) {
-		uint8_t txBuf[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	Serial.println("--------");
+	Serial.println("Logging in.");
+	Serial.println("--------");
 
-		for (int i = 0; i < 6; ++i) {
-			txBuf[i] = serialNumber[i];
-		}
+	uint8_t txBuf[8] = { 0 };
 
-		CAN.sendMsgBuf(0x05004804, 1, 8, txBuf);
+	for (int i = 0; i < 6; ++i) {
+		txBuf[i] = serialNumber[i];
 	}
+
+	CAN.sendMsgBuf(0x05004804, 1, 8, txBuf);
 }
 
-void processIdentificationMessage(long unsigned int rxID, int len, unsigned char rxBuf[]) {
+void processLogInRequest(uint32_t rxID, uint8_t len, uint8_t rxBuf[]) {
 	Serial.println("--------");
-	Serial.print("Found power supply, logging in: ");
+	Serial.print("Found power supply ");
 
 	char output[3];
 
 	for (int i = 0; i < 6; ++i) {
-		serialNumber[i] = rxBuf[i];
+		serialNumber[i] = rxBuf[i + 1];
 
 		snprintf(output, 3, "%.2X", serialNumber[i]);
 		Serial.print(output);
 	}
 
+	serialNumberReceived = true;
+
 	Serial.println();
 	Serial.println("--------");
-
-	serialNumberPresent = true;
-
-	logIn();
 }
 
-void processStatusMessage(long unsigned int rxID, int len, unsigned char rxBuf[]) {
+void processStatusMessage(uint32_t rxID, uint8_t len, uint8_t rxBuf[]) {
 	int intakeTemperature = rxBuf[0];
 	float current = 0.1f * (rxBuf[1] | (rxBuf[2] << 8));
 	float outputVoltage = 0.01f * (rxBuf[3] | (rxBuf[4] << 8));
@@ -84,7 +87,7 @@ void processStatusMessage(long unsigned int rxID, int len, unsigned char rxBuf[]
 	char output[256];
 	
 	Serial.println("--------");
-	Serial.println("Charger status message:");
+	Serial.println("Status message:");
 
 	Serial.print("Intake temperature: ");
 	Serial.print(intakeTemperature);
@@ -127,7 +130,7 @@ void processStatusMessage(long unsigned int rxID, int len, unsigned char rxBuf[]
 	Serial.println("--------");
 }
 
-void processAlarmWarningMessage(long unsigned int rxID, int len, unsigned char rxBuf[]) {
+void processWarningOrAlarmMessage(uint32_t rxID, uint8_t len, uint8_t rxBuf[]) {
 	bool isWarning = rxBuf[1] == 0x04;
 
 	Serial.println("--------");
@@ -140,127 +143,49 @@ void processAlarmWarningMessage(long unsigned int rxID, int len, unsigned char r
 	uint8_t alarms0 = rxBuf[3];
 	uint8_t alarms1 = rxBuf[4];
 
+	for (int i = 0; i < 8; ++i) {
+		if (alarms0 & (1 << i)) {
+			Serial.print(" ");
+			Serial.print(alarms0Strings[i]);
+		}
 
-	if (alarms0 & 0x80) {
-		Serial.print(" ");
-		Serial.print("CURRENT_LIMIT");
-	}
-
-	if (alarms0 & 0x40) {
-		Serial.print(" ");
-		Serial.print("LOW_TEMP");
-	}
-
-	if (alarms0 & 0x20) {
-		Serial.print(" ");
-		Serial.print("HIGH_TEMP");
-	}
-
-	if (alarms0 & 0x10) {
-		Serial.print(" ");
-		Serial.print("LOW_MAINS");
-	}
-
-	if (alarms0 & 0x08) {
-		Serial.print(" ");
-		Serial.print("HIGH_MAINS");
-	}
-
-	if (alarms0 & 0x04) {
-		Serial.print(" ");
-		Serial.print("MOD_FAIL_SECONDARY");
-	}
-
-	if (alarms0 & 0x02) {
-		Serial.print(" ");
-		Serial.print("MOD_FAIL_PRIMARY");
-	}
-
-	if (alarms0 & 0x01) {
-		Serial.print(" ");
-		Serial.print("OVS_LOCK_OUT");
-	}
-
-	if (alarms1 & 0x80) {
-		Serial.print(" ");
-		Serial.print("INNER_VOLT");
-	}
-
-	if (alarms1 & 0x40) {
-		Serial.print(" ");
-		Serial.print("FAN3_SPEED_LOW");
-	}
-
-	if (alarms1 & 0x20) {
-		Serial.print(" ");
-		Serial.print("SUB_MOD1_FAIL");
-	}
-
-	if (alarms1 & 0x10) {
-		Serial.print(" ");
-		Serial.print("FAN2_SPEED_LOW");
-	}
-
-	if (alarms1 & 0x08) {
-		Serial.print(" ");
-		Serial.print("FAN1_SPEED_LOW");
-	}
-
-	if (alarms1 & 0x04) {
-		Serial.print(" ");
-		Serial.print("MOD_FAIL_SECONDARY");
-	}
-
-	if (alarms1 & 0x02) {
-		Serial.print(" ");
-		Serial.print("MODULE_FAIL");
-	}
-
-	if (alarms1 & 0x01) {
-		Serial.print(" ");
-		Serial.print("INTERNAL_VOLTAGE");
+		if (alarms1 & (1 << i)) {
+			Serial.print(" ");
+			Serial.print(alarms1Strings[i]);
+		}
 	}
 
 	Serial.println();
-	Serial.println("--------");
+	Serial.println("--------");;
 }
 
 void loop() {
-	// INT pin is active low
+	// Log in every second
+	if (serialNumberReceived && millis() - lastLogInTime > 1000) {
+		logIn();
+
+		lastLogInTime = millis();
+	}
+
+	// Active low
 	if (!digitalRead(CAN_INT_PIN)) {
-		long unsigned int rxID;
-		unsigned char len = 0;
-		unsigned char rxBuf[8];
+		uint32_t rxID;
+		uint8_t len = 0;
+		uint8_t rxBuf[8];
 
-		CAN.readMsgBuf(&rxID, &len, rxBuf);
+		CAN.readMsgBuf((unsigned long *)&rxID, &len, rxBuf);
 
-		// Limit ID to lowest 29 bits
+		// Limit ID to lowest 29 bits (extended CAN)
 		rxID &= 0x1FFFFFFF;
 
 		printMessage(rxID, len, rxBuf);
 
-		switch (rxID) {
-		case 0x05014400:
-			processIdentificationMessage(rxID, len, rxBuf);
-			break;
-
-		case 0x05001554:
-			Serial.println("--------");
-			Serial.println("Recieved log in request, logging in");
-			Serial.println("--------");
-			logIn();
-			break;
-
-		case 0x0501BFFC:
-			processAlarmWarningMessage(rxID, len, rxBuf);
-			break;
-
-		case 0x05014004:
-		case 0x05014008:
-		case 0x0501400C:
-		case 0x05014010:
+		if (!serialNumberReceived && (rxID & 0xFFFF0000) == 0x05000000) {
+			processLogInRequest(rxID, len, rxBuf);
+		} else if ((rxID & 0xFFFFFF00) == 0x05014000) {
 			processStatusMessage(rxID, len, rxBuf);
-			break;
+		} else if (rxID == 0x0501BFFC) {
+			processWarningOrAlarmMessage(rxID, len, rxBuf);
 		}
 	}
 }

@@ -165,7 +165,7 @@
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="MCP2551" prefix="U" uservalue="yes">
+<deviceset name="MCP2551" prefix="U">
 <description>MCP2551 High-Speed CAN Transceiver</description>
 <gates>
 <gate name="G$1" symbol="MCP2551" x="0" y="0"/>
@@ -188,7 +188,7 @@
 </device>
 </devices>
 </deviceset>
-<deviceset name="MCP2515" prefix="U" uservalue="yes">
+<deviceset name="MCP2515" prefix="U">
 <description>MCP2515 Stand-Alone CAN Controller with SPI Interface</description>
 <gates>
 <gate name="G$1" symbol="MCP2515" x="0" y="0"/>

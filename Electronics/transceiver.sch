@@ -6590,8 +6590,8 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 </class>
 </classes>
 <parts>
-<part name="U1" library="mcp2515-2551" deviceset="MCP2515" device=""/>
-<part name="U2" library="mcp2515-2551" deviceset="MCP2551" device=""/>
+<part name="U1" library="mcp2515-2551" deviceset="MCP2515" device="" value="MCP2515"/>
+<part name="U2" library="mcp2515-2551" deviceset="MCP2551" device="" value="MCP2551"/>
 <part name="P+2" library="supply1" deviceset="VCC" device=""/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
@@ -6603,7 +6603,6 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 <part name="C2" library="rcl" deviceset="C-EU" device="025-030X050"/>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="R3" library="rcl" deviceset="R-US_" device="0204/7" value="10k"/>
-<part name="GND4" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6612,7 +6611,7 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 <instances>
 <instance part="U1" gate="G$1" x="45.72" y="-15.24"/>
 <instance part="U2" gate="G$1" x="0" y="0"/>
-<instance part="P+2" gate="VCC" x="45.72" y="10.16"/>
+<instance part="P+2" gate="VCC" x="45.72" y="12.7"/>
 <instance part="GND1" gate="1" x="-22.86" y="10.16" rot="R180"/>
 <instance part="GND2" gate="1" x="45.72" y="-38.1"/>
 <instance part="P+1" gate="VCC" x="-15.24" y="10.16"/>
@@ -6623,7 +6622,6 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 <instance part="C2" gate="G$1" x="5.08" y="-27.94" rot="R90"/>
 <instance part="GND3" gate="1" x="-5.08" y="-22.86" rot="R270"/>
 <instance part="R3" gate="G$1" x="68.58" y="-5.08" rot="R270"/>
-<instance part="GND4" gate="1" x="68.58" y="5.08" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -6632,7 +6630,12 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 <segment>
 <pinref part="U1" gate="G$1" pin="VDD"/>
 <pinref part="P+2" gate="VCC" pin="VCC"/>
+<wire x1="45.72" y1="10.16" x2="45.72" y2="7.62" width="0.1524" layer="91"/>
+<pinref part="R3" gate="G$1" pin="1"/>
 <wire x1="45.72" y1="7.62" x2="45.72" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="68.58" y1="0" x2="68.58" y2="7.62" width="0.1524" layer="91"/>
+<wire x1="68.58" y1="7.62" x2="45.72" y2="7.62" width="0.1524" layer="91"/>
+<junction x="45.72" y="7.62"/>
 </segment>
 <segment>
 <pinref part="P+1" gate="VCC" pin="VCC"/>
@@ -6666,11 +6669,6 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 <pinref part="GND3" gate="1" pin="GND"/>
 <wire x1="0" y1="-22.86" x2="-2.54" y2="-22.86" width="0.1524" layer="91"/>
 <junction x="0" y="-22.86"/>
-</segment>
-<segment>
-<pinref part="R3" gate="G$1" pin="1"/>
-<pinref part="GND4" gate="1" pin="GND"/>
-<wire x1="68.58" y1="0" x2="68.58" y2="2.54" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$1" class="0">
