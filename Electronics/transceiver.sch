@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.1.0">
+<eagle version="8.3.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
+<setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -6616,15 +6617,15 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 <instance part="U1" gate="G$1" x="45.72" y="-15.24"/>
 <instance part="U2" gate="G$1" x="0" y="0"/>
 <instance part="P+2" gate="VCC" x="45.72" y="12.7"/>
-<instance part="GND1" gate="1" x="-22.86" y="10.16" rot="R180"/>
+<instance part="GND1" gate="1" x="-27.94" y="-7.62"/>
 <instance part="GND2" gate="1" x="45.72" y="-38.1"/>
 <instance part="P+1" gate="VCC" x="-15.24" y="10.16"/>
-<instance part="R1" gate="G$1" x="-30.48" y="2.54"/>
+<instance part="R1" gate="G$1" x="-20.32" y="-2.54" rot="R180"/>
 <instance part="R2" gate="G$1" x="22.86" y="22.86"/>
 <instance part="Y1" gate="G$1" x="12.7" y="-22.86" rot="R270"/>
 <instance part="C1" gate="G$1" x="0" y="-17.78" rot="R90"/>
 <instance part="C2" gate="G$1" x="0" y="-27.94" rot="R90"/>
-<instance part="GND3" gate="1" x="-10.16" y="-22.86" rot="R270"/>
+<instance part="GND3" gate="1" x="-5.08" y="-33.02"/>
 <instance part="R3" gate="G$1" x="68.58" y="-5.08" rot="R270"/>
 <instance part="C3" gate="G$1" x="0" y="22.86" rot="R180"/>
 <instance part="GND5" gate="1" x="0" y="15.24"/>
@@ -6638,12 +6639,7 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 <segment>
 <pinref part="U1" gate="G$1" pin="VDD"/>
 <pinref part="P+2" gate="VCC" pin="VCC"/>
-<wire x1="45.72" y1="10.16" x2="45.72" y2="7.62" width="0.1524" layer="91"/>
-<pinref part="R3" gate="G$1" pin="1"/>
-<wire x1="45.72" y1="7.62" x2="45.72" y2="5.08" width="0.1524" layer="91"/>
-<wire x1="68.58" y1="0" x2="68.58" y2="7.62" width="0.1524" layer="91"/>
-<wire x1="68.58" y1="7.62" x2="45.72" y2="7.62" width="0.1524" layer="91"/>
-<junction x="45.72" y="7.62"/>
+<wire x1="45.72" y1="10.16" x2="45.72" y2="5.08" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="P+1" gate="VCC" pin="VCC"/>
@@ -6665,12 +6661,13 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 <net name="GND" class="0">
 <segment>
 <pinref part="GND1" gate="1" pin="GND"/>
-<pinref part="U2" gate="G$1" pin="VSS"/>
-<wire x1="-22.86" y1="7.62" x2="-22.86" y2="2.54" width="0.1524" layer="91"/>
-<wire x1="-22.86" y1="2.54" x2="-12.7" y2="2.54" width="0.1524" layer="91"/>
+<wire x1="-27.94" y1="-5.08" x2="-27.94" y2="-2.54" width="0.1524" layer="91"/>
 <pinref part="R1" gate="G$1" pin="2"/>
-<wire x1="-25.4" y1="2.54" x2="-22.86" y2="2.54" width="0.1524" layer="91"/>
-<junction x="-22.86" y="2.54"/>
+<wire x1="-25.4" y1="-2.54" x2="-27.94" y2="-2.54" width="0.1524" layer="91"/>
+<pinref part="U2" gate="G$1" pin="VSS"/>
+<wire x1="-12.7" y1="2.54" x2="-27.94" y2="2.54" width="0.1524" layer="91"/>
+<wire x1="-27.94" y1="2.54" x2="-27.94" y2="-2.54" width="0.1524" layer="91"/>
+<junction x="-27.94" y="-2.54"/>
 </segment>
 <segment>
 <pinref part="GND2" gate="1" pin="GND"/>
@@ -6680,13 +6677,12 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 <segment>
 <pinref part="C1" gate="G$1" pin="1"/>
 <wire x1="-2.54" y1="-17.78" x2="-5.08" y2="-17.78" width="0.1524" layer="91"/>
-<wire x1="-5.08" y1="-17.78" x2="-5.08" y2="-22.86" width="0.1524" layer="91"/>
+<wire x1="-5.08" y1="-17.78" x2="-5.08" y2="-27.94" width="0.1524" layer="91"/>
 <pinref part="C2" gate="G$1" pin="1"/>
-<wire x1="-5.08" y1="-22.86" x2="-5.08" y2="-27.94" width="0.1524" layer="91"/>
 <wire x1="-5.08" y1="-27.94" x2="-2.54" y2="-27.94" width="0.1524" layer="91"/>
 <pinref part="GND3" gate="1" pin="GND"/>
-<wire x1="-5.08" y1="-22.86" x2="-7.62" y2="-22.86" width="0.1524" layer="91"/>
-<junction x="-5.08" y="-22.86"/>
+<wire x1="-5.08" y1="-27.94" x2="-5.08" y2="-30.48" width="0.1524" layer="91"/>
+<junction x="-5.08" y="-27.94"/>
 </segment>
 <segment>
 <pinref part="C3" gate="G$1" pin="1"/>
@@ -6697,9 +6693,8 @@ This is the "KIT" version, which has limited top masking for improved ease of as
 <net name="N$1" class="0">
 <segment>
 <pinref part="U2" gate="G$1" pin="RS"/>
-<wire x1="-12.7" y1="-2.54" x2="-35.56" y2="-2.54" width="0.1524" layer="91"/>
+<wire x1="-12.7" y1="-2.54" x2="-15.24" y2="-2.54" width="0.1524" layer="91"/>
 <pinref part="R1" gate="G$1" pin="1"/>
-<wire x1="-35.56" y1="-2.54" x2="-35.56" y2="2.54" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$2" class="0">
